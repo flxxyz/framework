@@ -65,4 +65,37 @@ class ExmapleController extends Controller
 
         return $this->display();
     }
+
+    public function demoDb()
+    {
+        // 通过id查找单条记录
+        User::find(1);
+
+        // 查找所有记录，显示部分字段
+        User::all('id,name', 'num', 'time');
+
+        // 同上
+        User::select('id,name', 'num', 'time')->get();
+
+        // 多种方式条件查找单条(使用find)或多条(使用get)
+        User::where([
+            ['num', '>=', 5],
+            'time' => date('Y-m-d'),
+        ])->find();
+
+        // 插入记录
+        User::insert([
+            'name' => '李美丽',
+            'num' => 666,
+            'time' => date('Y-m-d'),
+        ]);
+
+        // 条件更新
+        User::where([
+            'id' => 1,
+        ])->update([
+            'num' => 777,
+            'time' => date('Y-m-d'),
+        ]);
+    }
 }
