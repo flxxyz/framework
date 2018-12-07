@@ -46,11 +46,6 @@ abstract class Model
      */
     protected static $queryBuilder;
 
-    /**
-     * @var array
-     */
-    protected static $bindings = [];
-
     public function __construct()
     {
         static::setConnection(Config::get('database'));
@@ -94,12 +89,13 @@ abstract class Model
 
     public static function find($id = null)
     {
+        $bindings = [];
         if ( !is_null($id)) {
-            static::$bindings['id'] = $id;
+            $bindings['id'] = $id;
         }
 
         return static::make()->bindings(
-            static::$bindings,
+            $bindings,
             'where'
         )->find();
     }
@@ -121,8 +117,6 @@ abstract class Model
 
     public static function where($bindings = [])
     {
-        static::$bindings = $bindings;
-
         return static::make()->bindings(
             $bindings,
             'where'

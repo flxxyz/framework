@@ -18,7 +18,9 @@ use App\Models\{
 $user = User::find(1);
 var_dump($user);
 
-$log = Log::where([
-    ['time', '>', 1541987000]
-])->get();
+//$log = Log::where([
+//    ['time', '>', 1543337095]
+//])->get();
+$log = Log::find(13);
+$log = Log::all('id,email');
 var_dump($log);

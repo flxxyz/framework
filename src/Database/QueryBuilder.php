@@ -210,7 +210,9 @@ class QueryBuilder implements QueryBuilderInterface
 
     public function all()
     {
-        return $this->query()->result;
+        return $this->bindings([], 'where')
+            ->query()
+            ->result;
     }
 
     public function find($id = null)
