@@ -22,5 +22,6 @@ var_dump($user);
 //    ['time', '>', 1543337095]
 //])->get();
 $log = Log::find(13);
+var_dump($log);
 $log = Log::all('id,email');
 var_dump($log);
