@@ -71,9 +71,7 @@ abstract class Model
 
     protected static function make(): QueryBuilder
     {
-        if (is_null(static::$model)) {
-            static::$model = (new static)->newQuery();
-        }
+        static::$model = (new static)->newQuery();
 
         return static::$model;
     }
@@ -153,7 +151,8 @@ abstract class Model
     public function getPrefix()
     {
         if ( !$this->prefix) {
-            $this->prefix = static::getConnection()->getPrefix();
+            $this->prefix =
+                static::getConnection()->getPrefix();
         }
 
         return $this->prefix;
