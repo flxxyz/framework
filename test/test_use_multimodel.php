@@ -12,16 +12,16 @@ define('CONTROLLER_DIR', realpath(APP_DIR.'Controllers').DS, true);
 
 
 use App\Models\{
-    User,
-    Log
+    TestUser,
+    TestLog
 };
-$user = User::find(1);
+$user = TestUser::find(1);
 var_dump($user);
 
 //$log = Log::where([
 //    ['time', '>', 1543337095]
 //])->get();
-$log = Log::find(13);
+$log = TestLog::find(13);
 var_dump($log);
-$log = Log::all('id,email');
+$log = TestLog::all('id,email');
 var_dump($log);
