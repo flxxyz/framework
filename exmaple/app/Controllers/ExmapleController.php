@@ -100,12 +100,12 @@ class ExmapleController extends Controller
         ]);
     }
 
-    public function demoAliyunOss()
+    public function demoAliyunOss(Request $request)
     {
-        $bucketListInfo = oss()->listBuckets();
-        $bucketList = $bucketListInfo->getBucketList();
-        foreach($bucketList as $bucket) {
-            print($bucket->getLocation() . "\t" . $bucket->getName() . "\t" . $bucket->getCreatedate() . "\n");
-        }
+        $path = $request->get('path', null);
+        $list = oss()->getList($path);
+
+        $this->assign('list', $list);
+        $this->display();
     }
 }
