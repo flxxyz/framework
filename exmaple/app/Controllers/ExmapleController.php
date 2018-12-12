@@ -22,6 +22,7 @@ class ExmapleController extends Controller
             '/json' => 'json (RESTful API)',
             '/hash' => '基准测试 (哈希类)',
             '/view/?param=我是一个变量哟' => '视图输出，传递变量',
+            '/oss' => '阿里云oss测试',
         ];
         $this->assign('urls', $data);
 
@@ -97,5 +98,14 @@ class ExmapleController extends Controller
             'num' => 777,
             'time' => date('Y-m-d'),
         ]);
+    }
+
+    public function demoAliyunOss()
+    {
+        $bucketListInfo = oss()->listBuckets();
+        $bucketList = $bucketListInfo->getBucketList();
+        foreach($bucketList as $bucket) {
+            print($bucket->getLocation() . "\t" . $bucket->getName() . "\t" . $bucket->getCreatedate() . "\n");
+        }
     }
 }

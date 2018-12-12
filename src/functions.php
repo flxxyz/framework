@@ -11,3 +11,9 @@ if (!function_exists('request')) {
         return \Col\Request::make();
     }
 }
+
+if (!function_exists('oss')) {
+    function oss() {
+        return \Col\Lib\SDK\AliyunOss::make();
+    }
+}

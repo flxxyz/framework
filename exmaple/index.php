@@ -45,6 +45,7 @@ Route::get('/hash', function (\Col\Request $request) {
     return "Appropriate Cost Found: " . ($cost-1);
 });
 Route::get('/view', 'ExmapleController@demoView');
+Route::get('/oss', 'ExmapleController@demoAliyunOss');
 // 设置路由结束
 
 Route::end();
