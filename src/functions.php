@@ -18,6 +18,20 @@ if (!function_exists('oss')) {
     }
 }
 
+if (!function_exists('view')) {
+    function view($filename = '', $data = []) {
+        $filename = $filename . '.view.php';
+        $path = VIEW_DIR . $filename;
+
+        if (!is_file($path)) {
+            exit('视图文件不存在=' . $filename);
+        }
+
+        extract($data, EXTR_PREFIX_INVALID, 'view_');  // 非法或数字变量, 添加前缀
+        include_once "{$path}";
+    }
+}
+
 if (!function_exists('file_unit_conver')) {
     function file_unit_conver($byte = 0)
     {
