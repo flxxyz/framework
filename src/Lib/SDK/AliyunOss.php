@@ -22,7 +22,7 @@ class AliyunOss
     private $accessKeyId = '';
     private $accessKeySecret = '';
     private $endpoint = '';
-    public $bucket = '';
+    private $bucket = '';
     private $domain = '';
     private $timeout = 3600;
 
@@ -137,6 +137,7 @@ class AliyunOss
                             'type' => 'dir',
                             'name' => '..',
                             'size' => null,
+                            'time' => null,
                             'url' => '?path=',
                         ];
                     } else {
@@ -145,6 +146,7 @@ class AliyunOss
                             'type' => 'file',
                             'name' => $basename,
                             'size' => file_unit_conver($objectInfo->getSize()),
+                            'time' => strtotime($objectInfo->getLastModified()),
                             'url' => $this->signUrl($objectInfo->getKey()),
                         ];
                     }
@@ -157,6 +159,7 @@ class AliyunOss
                         'type' => 'dir',
                         'name' => $prefixInfo->getPrefix(),
                         'size' => null,
+                        'time' => null,
                         'url' => '?path=' . $prefixInfo->getPrefix(),
                     ];
                 }
@@ -179,7 +182,7 @@ class AliyunOss
      * @return string
      * @throws OssException
      */
-    public function signUrl($object)
+    private function signUrl($object)
     {
         switch ($this->getBucketAcl()) {
             case 'private':
