@@ -133,13 +133,23 @@ class AliyunOss
             if (!empty($listObject)) {
                 foreach ($listObject as $objectInfo) {
                     if ($prefix === $objectInfo->getKey()) {
-                        $fileList[] = [
+                        $a = explode('/', $prefix);
+                        array_pop($a);
+                        array_pop($a);
+
+                        if (count($a)) {
+                            $url = '?path='.join('/', $a) . '/';
+                        } else {
+                            $url = '?path=';
+                        }
+
+                        array_unshift($dirList, [
                             'type' => 'dir',
                             'name' => '..',
                             'size' => null,
                             'time' => null,
-                            'url' => '?path=',
-                        ];
+                            'url' => $url,
+                        ]);
                     } else {
                         $basename = pathinfo($objectInfo->getKey())['basename'];
                         $fileList[] = [
@@ -170,8 +180,8 @@ class AliyunOss
             }
         }
 
-        sort($dirList);
-        sort($fileList);
+//        sort($dirList);
+//        sort($fileList);
 
         return array_merge($dirList, $fileList);
     }
