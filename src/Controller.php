@@ -8,11 +8,21 @@ abstract class Controller
 {
     private $param = [];
 
+    /**
+     * 传递模板数据
+     * @param $name
+     * @param $value
+     * @example $this->assign('param1', '这是字符串');
+     */
     protected function assign($name, $value)
     {
         $this->param[$name] = $value;
     }
 
+    /**
+     * 输出视图
+     * @param array $path
+     */
     protected function display($path = [])
     {
         $filename = join(
@@ -29,6 +39,10 @@ abstract class Controller
         include_once "{$path}";
     }
 
+    /**
+     * 取调用的子类方法名
+     * @return mixed
+     */
     private function getMethod()
     {
         $backtrace = debug_backtrace();
@@ -37,6 +51,11 @@ abstract class Controller
         return $backtrace[1]['function'];
     }
 
+    /**
+     * json输出
+     * @param array $a
+     * @return array|false|string
+     */
     protected function json($a = [])
     {
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
