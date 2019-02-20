@@ -11,6 +11,11 @@ define('VIEW_DIR', realpath(APP_DIR.'Views').DS, true);
 define('MODEL_DIR', realpath(APP_DIR.'Models').DS, true);
 define('CONTROLLER_DIR', realpath(APP_DIR.'Controllers').DS, true);
 
+//模块目录名称
+define('MODEL_NAME', 'App', true);
+//控制器目录名称
+define('CONTROLLER_NAME', 'Controllers', true);
+
 use Col\{
     Route,
     Lib\Config

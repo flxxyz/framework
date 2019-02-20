@@ -8,6 +8,7 @@ use Col\Exceptions\MethodNotFoundException;
 class RouteHandler
 {
     /**
+     * 可定义的http方法
      * @var array
      */
     protected static $httpMethods = [
@@ -18,16 +19,19 @@ class RouteHandler
     ];
 
     /**
+     * 注册路由表
      * @var array
      */
     public static $routes = [];
 
     /**
+     * 当前请求类
      * @var Request
      */
     protected static $request;
 
     /**
+     * 路由处理回调函数
      * @var callable|array
      */
     protected static $routeCallback;
@@ -57,13 +61,9 @@ class RouteHandler
                 continue;
             }
 
-            if (!isset($route[static::$request->getMethod()])) {
-                return null;
-            }
+            $closure = $route[static::$request->getMethod()] ?? null;
 
-            $closure = $route[static::$request->getMethod()];
-
-            if (!isset($closure)) {
+            if (is_null($closure)) {
                 return null;
             }
 
@@ -75,15 +75,16 @@ class RouteHandler
                 }
 
                 $action = explode('@', $closure);
-                $c = "\\App\\Controllers\\{$action[0]}";
-                $a = $action[1];
+                $className = '\\'.MODEL_NAME.'\\'.CONTROLLER_NAME.'\\'.$action[0];
+                $method = $action[1];
 
-                $rc = new \ReflectionClass(new $c);
-                if (!$rc->hasMethod($a)) {
-                    return static::methodNotFound($rc->getName(), $a);
+                $class = new $className;
+                $rc = new \ReflectionClass($class);
+                if (!$rc->hasMethod($method)) {
+                    return static::methodNotFound($rc->getName(), $method);
                 }
 
-                $closure = [(new $c), $a];
+                $closure = [$class, $method];
             }
 
             return $closure;
@@ -92,11 +93,15 @@ class RouteHandler
         return null;
     }
 
+    /**
+     * 路由方法不存在抛错
+     * @param mixed ...$v
+     * @return \Closure
+     */
     protected static function methodNotFound(...$v)
     {
-        return function ($a) use ($v) {
-            echo "'{$v[0]}' does not have a method '{$v[1]}'";
-            //throw new MethodNotFoundException();
+        return function () use ($v) {
+            throw new MethodNotFoundException("'{$v[0]}' does not have a method '{$v[1]}'");
         };
     }
 }
