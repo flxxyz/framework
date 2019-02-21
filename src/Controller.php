@@ -60,7 +60,7 @@ abstract class Controller
     {
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
         if (in_array($origin, Config::get('app', 'allow_origins'))) {
-            header('Access-Control-Allow-Origin: ', $origin);
+            header('Access-Control-Allow-Origin: ' . $origin);
         }
 
         header('Access-Control-Allow-Methods: ' . Config::get('app', 'allow_methods'));
