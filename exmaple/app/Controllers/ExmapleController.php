@@ -4,10 +4,7 @@ namespace App\Controllers;
 
 
 use App\Models\TestUser;
-use Col\{
-    Controller,
-    Request
-};
+use Col\{Controller, Lib\Logger, Lib\Storage, Request};
 
 class ExmapleController extends Controller
 {
@@ -22,7 +19,7 @@ class ExmapleController extends Controller
             '/json' => 'json (RESTful API)',
             '/hash' => '基准测试 (哈希类)',
             '/view/?param=我是一个变量哟' => '视图输出，传递变量',
-            '/oss' => '阿里云oss测试',
+            '/storage' => '本地存储操作',
         ];
         $this->assign('urls', $data);
 
@@ -33,7 +30,7 @@ class ExmapleController extends Controller
     {
         $content = '这里会记录打印一条日志';
 
-        logger()->info($content);
+        Logger::debug($content);
 
         return $content;
     }
@@ -100,12 +97,19 @@ class ExmapleController extends Controller
         ]);
     }
 
-    public function demoAliyunOss(Request $request)
+    public function demoStorage(Request $request)
     {
+        $storage = Storage::make();
         $path = $request->get('path', null);
-        $list = oss()->getList($path);
+        $down = $request->get('down', null);
+        $name = $request->get('name', null);
+        if (!is_null($down)) {
+            $data = $storage->download($name, $path);
+        } else {
+            $data = $storage->get($path);
+        }
+        Logger::debug($data);
 
-        $this->assign('list', $list);
-        $this->display();
+        return $this->json($data);
     }
 }

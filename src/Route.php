@@ -3,7 +3,7 @@
 namespace Col;
 
 
-use Col\Lib\Config;
+use Col\Lib\Conf;
 
 class Route extends RouteHandler
 {
@@ -14,15 +14,15 @@ class Route extends RouteHandler
     public static function make(Request $request)
     {
         //合并http方法
-        static::$httpMethods['any'] = (function () {
+        self::$httpMethods['any'] = (function () {
             $t = [];
-            foreach (static::$httpMethods as $method) {
+            foreach (self::$httpMethods as $method) {
                 $t = array_merge($t, $method);
             }
             return $t;
         })();
         //传递当前请求类
-        static::$request = $request;
+        self::$request = $request;
     }
 
     /**
@@ -31,17 +31,17 @@ class Route extends RouteHandler
      */
     public static function end()
     {
-        static::$routeCallback = static::routeHandler() ?? function () {
+        self::$routeCallback = self::routeHandler() ?? function () {
                 http_response_code(404);
-                $error_page = Config::get('app', 'error_page');
-                include_once  "{$error_page['404']}";
+                $error_page = Conf::get('app', 'error_page');
+                include_once "{$error_page['404']}";
             };
 
         ob_start();
 
-        $a = (static::$routeCallback)(static::$request);
-        if (is_string($a) || is_numeric($a)) {
-            echo $a;
+        $r = (self::$routeCallback)(self::$request);
+        if (is_string($r) || is_numeric($r)) {
+            echo $r;
         }
 
         ob_end_flush();
@@ -50,7 +50,6 @@ class Route extends RouteHandler
 
     public static function __callStatic($name, $arguments)
     {
-        $arguments[] = $name;
-        static::add(...$arguments);
+        self::add($arguments[0], $arguments[1], $name);
     }
 }

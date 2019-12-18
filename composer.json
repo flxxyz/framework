@@ -4,7 +4,7 @@
   "homepage": "https://github.com/flxxyz/framework",
   "minimum-stability": "stable",
   "prefer-stable": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "type": "library",
   "authors": [
@@ -14,8 +14,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
-    "aliyuncs/oss-sdk-php": "~2.0"
+    "php": ">=7.0"
   },
   "autoload": {
     "psr-4": {

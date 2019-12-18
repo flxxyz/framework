@@ -2,83 +2,109 @@
 
 namespace Col\Lib;
 
+use Col\Exceptions\{
+    DirException,
+    LoggerException
+};
 
+/**
+ * Class Logger
+ *
+ * @package Col\Lib
+ * @method static notice($expression)
+ * @method static info($expression)
+ * @method static debug($expression)
+ * @method static warn($expression)
+ * @method static error($expression)
+ */
 class Logger
 {
+    /**
+     * @var Logger | null
+     */
     private static $instance = null;
 
-    private $log = [];
+    /**
+     * @var array
+     */
+    private static $methods = [
+        'NOTICE',
+        'INFO',
+        'DEBUG',
+        'WARN',
+        'ERROR',
+    ];
 
-    private function __construct() {
-        $this->log = Config::get('app', 'log');
+    private $conf = [];
+
+    private function __construct()
+    {
+        $this->conf = Conf::get('log');
+    }
+
+    public static function make()
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
+        }
     }
 
     /**
-     * @return Logger|null
+     * 写入
+     *
+     * @param $content
+     * @throws DirException
      */
-    public static function make()
+    private function write($content)
     {
-        if (is_null(static::$instance)) {
-            static::$instance = new static();
+        if (!is_dir(BASE_DIR.'log')) {
+            $mkdirState = mkdir(BASE_DIR.'log', 777, true);
+            if (!$mkdirState) {
+                throw new DirException('创建log目录失败');
+            }
         }
 
-        return static::$instance;
+        $filename = $this->conf['dir'].date('Y-m-d').'.log';
+        $fp = fopen($filename, 'a+');
+        fwrite($fp, $content);
+        fclose($fp);
     }
 
-    public function info(...$x)
+    /**
+     * 静态方法通用处理
+     *
+     * @param $name
+     * @param $arguments
+     * @throws DirException
+     * @throws LoggerException
+     */
+    public static function __callStatic($name, $arguments)
     {
-        foreach ($x as $v) {
-            $this->message(__FUNCTION__, $v);
+        if (is_null(self::$instance)) {
+            throw new LoggerException('请先实例化Logger类');
+        }
+
+        if (in_array(strtoupper($name), self::$methods)) {
+            $datetime = new \DateTime();
+            $time = $datetime->format(self::$instance->conf['format']);
+            foreach ($arguments as $value) {
+                if (is_array($value) || is_object($value)) {
+                    $data = json_encode($value, JSON_UNESCAPED_UNICODE);
+                } else {
+                    $data = $value;
+                }
+
+                $row = sprintf('[%s] [%s] %s'.PHP_EOL,
+                    $time,
+                    strtoupper($name),
+                    $data
+                );
+                self::$instance->write($row);
+            }
         }
     }
 
-    public function notice(...$x)
+    private function __clone()
     {
-        foreach ($x as $v) {
-            $this->message(__FUNCTION__, $v);
-        }
     }
-
-    public function debug(...$x)
-    {
-        foreach ($x as $v) {
-            $this->message(__FUNCTION__, $v);
-        }
-    }
-
-    public function warn(...$x)
-    {
-        foreach ($x as $v) {
-            $this->message(__FUNCTION__, $v);
-        }
-    }
-
-    public function err(...$x)
-    {
-        foreach ($x as $v) {
-            $this->message(__FUNCTION__, $v);
-        }
-    }
-
-    private function message($channel, $v)
-    {
-        $datetime = new \DateTime();
-        $time = $datetime->format($this->log['format']);
-        $channel = strtoupper($channel);
-
-        $data = $v;
-        if (is_array($v) || is_object($v)) {
-            $data = json_encode($v, JSON_UNESCAPED_UNICODE);
-        }
-        $data = "[{$time}] [{$channel}] {$data}" . PHP_EOL;
-
-        $filename = $this->log['dir'] . date('Y-m-d') . '.log';
-        if (!is_dir($this->log['dir'])) {
-            touch($filename);
-        }
-
-        file_put_contents($filename, $data, FILE_APPEND);
-    }
-
-    private function __clone() {}
 }

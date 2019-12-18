@@ -16,19 +16,6 @@ return [
      */
     'allow_methods' => '*',
     /**
-     * 日志设置
-     */
-    'log' => [
-        /**
-         * 存放目录(绝对路径)
-         */
-        'dir' => BASE_DIR . 'log' . DS,
-        /**
-         * 日志内容格式
-         */
-        'format' => 'D H:i:s u',
-    ],
-    /**
      * 错误页面设置
      */
     'error_page' => [

@@ -3,7 +3,7 @@
 namespace Col;
 
 
-use Col\Lib\Config;
+use Col\Lib\Conf;
 use PDO;
 use Col\Database\Connection;
 use Col\Database\QueryBuilder;
@@ -48,7 +48,7 @@ abstract class Model
 
     public function __construct()
     {
-        static::setConnection(Config::get('database'));
+        static::setConnection(Conf::get('database'));
         static::$queryBuilder = new QueryBuilder(
             static::getConnection()
         );
@@ -175,7 +175,7 @@ abstract class Model
     {
         if (is_null(static::$connection->getPdo())) {
             //重连数据库
-            static::setConnection(Config::get('database'));
+            static::setConnection(Conf::get('database'));
             static::$queryBuilder = new QueryBuilder(
                 static::getConnection()
             );

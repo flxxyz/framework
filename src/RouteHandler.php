@@ -32,9 +32,9 @@ class RouteHandler
 
     /**
      * 路由处理回调函数
-     * @var callable|array
+     * @var callable|array|null|string
      */
-    protected static $routeCallback;
+    protected static $routeCallback = null;
 
     /**
      * 路由添加方法
@@ -44,8 +44,8 @@ class RouteHandler
      */
     protected static function add($uri, $callback, $action)
     {
-        foreach (static::$httpMethods[$action] as $method) {
-            static::$routes[$uri][$method] = $callback;
+        foreach (self::$httpMethods[$action] as $method) {
+            self::$routes[$uri][$method] = $callback;
         }
     }
 
@@ -56,12 +56,12 @@ class RouteHandler
      */
     protected static function routeHandler()
     {
-        foreach (static::$routes as $uri => $route) {
-            if (static::$request->getUri() !== $uri) {
+        foreach (self::$routes as $uri => $route) {
+            if (self::$request->getUri() !== $uri) {
                 continue;
             }
 
-            $closure = $route[static::$request->getMethod()] ?? null;
+            $closure = $route[self::$request->getMethod()] ?? null;
 
             if (is_null($closure)) {
                 return null;
@@ -101,7 +101,8 @@ class RouteHandler
     protected static function methodNotFound(...$v)
     {
         return function () use ($v) {
-            throw new MethodNotFoundException("'{$v[0]}' does not have a method '{$v[1]}'");
+            echo "'{$v[0]}' does not have a method '{$v[1]}'<pre>";
+            throw new MethodNotFoundException('没有找到该方法,检查一下大小写吧');
         };
     }
 }

@@ -18,11 +18,15 @@ define('CONTROLLER_NAME', 'Controllers', true);
 
 use Col\{
     Route,
-    Lib\Config
+    Lib\Conf,
+    Lib\Logger
 };
 
+Conf::make();
+Logger::make();
+
 // 设置脚本时区
-ini_set('date.timezone', Config::get('app', 'timezone'));
+ini_set('date.timezone', Conf::get('app', 'timezone'));
 
 // 实例路由，注入请求
 Route::make(\request());
@@ -50,7 +54,7 @@ Route::get('/hash', function (\Col\Request $request) {
     return "Appropriate Cost Found: " . ($cost-1);
 });
 Route::get('/view', 'ExmapleController@demoView');
-Route::get('/oss', 'ExmapleController@demoAliyunOss');
+Route::get('/storage', 'ExmapleController@demoStorage');
 // 设置路由结束
 
 Route::end();

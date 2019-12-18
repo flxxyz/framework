@@ -2,7 +2,7 @@
 
 namespace Col;
 
-use Col\Lib\Config;
+use Col\Lib\Conf;
 
 abstract class Controller
 {
@@ -59,11 +59,11 @@ abstract class Controller
     protected function json($a = [])
     {
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-        if (in_array($origin, Config::get('app', 'allow_origins'))) {
-            header('Access-Control-Allow-Origin: ' . $origin);
+        if (in_array($origin, Conf::get('app', 'allow_origins'))) {
+            header('Access-Control-Allow-Origin: ', $origin);
         }
 
-        header('Access-Control-Allow-Methods: ' . Config::get('app', 'allow_methods'));
+        header('Access-Control-Allow-Methods: ' . Conf::get('app', 'allow_methods'));
         header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         header('Content-Type: application/json;charset:utf-8;');
         header('Pragma: no-cache');
