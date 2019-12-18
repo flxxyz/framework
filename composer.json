@@ -4,7 +4,7 @@
   "homepage": "https://github.com/flxxyz/framework",
   "minimum-stability": "stable",
   "prefer-stable": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "type": "library",
   "authors": [
