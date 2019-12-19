@@ -16,11 +16,11 @@ define('MODEL_NAME', 'App', true);
 //控制器目录名称
 define('CONTROLLER_NAME', 'Controllers', true);
 
-use Col\{
-    Route,
-    Lib\Conf,
-    Lib\Logger
-};
+use Col\Route;
+use Col\Request;
+use Col\Lib\Conf;
+use Col\Lib\Logger;
+use Col\Lib\Hash;
 
 Conf::make();
 Logger::make();
@@ -39,14 +39,14 @@ Route::any('/closure', function () {
 Route::get('/log', 'ExmapleController@demoLogger');
 Route::get('/request', 'ExmapleController@demoRequest');
 Route::get('/json', 'ExmapleController@demoJson');
-Route::get('/hash', function (\Col\Request $request) {
+Route::get('/hash', function (Request $request) {
     //基准测试，控制性能开销在10毫秒内
     $timeTarget = 0.01; // 10 毫秒（milliseconds）
 
     $cost = 5;
     do {
         $start = microtime(true);
-        \Col\Lib\Hash::make($request->getUserAgent(), $cost);
+        Hash::make($request->getUserAgent(), $cost);
         $cost++;
         $end = microtime(true);
     } while (($end - $start) < $timeTarget);

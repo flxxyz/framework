@@ -2,10 +2,8 @@
 
 namespace Col\Lib;
 
-use Col\Exceptions\{
-    DirException,
-    LoggerException
-};
+use Col\Exceptions\LoggerException;
+use Col\Exceptions\DirException;
 
 /**
  * Class Logger

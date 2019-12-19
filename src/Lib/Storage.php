@@ -3,6 +3,7 @@
 
 namespace Col\Lib;
 
+use Col\Exceptions\DirException;
 use DirectoryIterator;
 
 class Storage
@@ -33,7 +34,7 @@ class Storage
      *
      * @var mixed|string
      */
-    private $dataPath = BASE_DIR.'data';
+    private $dataPath = '';
 
     /**
      * 默认返回的时间格式
@@ -64,6 +65,8 @@ class Storage
         }
         if (!in_array($this->conf['dataPath'], [''])) {
             $this->dataPath = $this->conf['dataPath'];
+        } else {
+            $this->dataPath = BASE_DIR.'data';
         }
         $this->ignore = array_merge($this->ignore, $this->conf['ignore']);
     }
@@ -79,6 +82,7 @@ class Storage
 
     /**
      * 获取当前路径下所有文件及文件夹
+     *
      * @param null $path
      * @return array
      */
@@ -137,7 +141,7 @@ class Storage
             $result[] = $extra;
         }
 
-        return $this->sort($result);
+        return $result;
     }
 
     public function download($name, $path = null)
@@ -147,6 +151,7 @@ class Storage
 
     /**
      * 文件夹排序优先
+     *
      * @param $result
      * @return array
      */

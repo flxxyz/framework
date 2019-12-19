@@ -67,14 +67,22 @@ class QueryBuilder implements QueryBuilderInterface
         $this->prefix = $connection->getPrefix();
     }
 
-    public function prefix($prefix): QueryBuilder
+    /**
+     * @param $prefix
+     * @return $this
+     */
+    public function prefix($prefix)
     {
-        $this->prefix = $prefix ?? $this->prefix;
+        $this->prefix = isset($prefix) ? $prefix : $this->prefix;
 
         return $this;
     }
 
-    public function table($table): QueryBuilder
+    /**
+     * @param $table
+     * @return $this
+     */
+    public function table($table)
     {
         $this->table = join('', [
             $this->prefix,
@@ -84,7 +92,11 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    public function columns($columns = ['*']): QueryBuilder
+    /**
+     * @param array $columns
+     * @return $this
+     */
+    public function columns($columns = ['*'])
     {
         $this->columns =
             join(', ', is_array($columns) ? $columns : func_get_args());
@@ -92,7 +104,12 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    public function bindings($bindings, $method): QueryBuilder
+    /**
+     * @param $bindings
+     * @param $method
+     * @return $this
+     */
+    public function bindings($bindings, $method)
     {
         $this->method = $method;
 
@@ -115,7 +132,11 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    protected function bindingsWhere($bindings): array
+    /**
+     * @param $bindings
+     * @return array
+     */
+    protected function bindingsWhere($bindings)
     {
         $this->where = 'WHERE ';
         $total = count($bindings);
@@ -188,16 +209,26 @@ class QueryBuilder implements QueryBuilderInterface
         );
     }
 
-    public function select(...$columns): QueryBuilder
+    /**
+     * @param mixed ...$columns
+     * @return QueryBuilder
+     */
+    public function select()
     {
+        $columns = func_get_args();
         $this->columns($columns);
 
         return $this;
     }
 
-    public function limit($start, $page = null): QueryBuilder
+    /**
+     * @param      $start
+     * @param null $page
+     * @return QueryBuilder
+     */
+    public function limit($start, $page = null)
     {
-        $limits = [$start ?? 1];
+        $limits = isset($start) ? $start : 1;
 
         if ( !is_null($page)) {
             $limits[] = $page;
@@ -234,14 +265,18 @@ class QueryBuilder implements QueryBuilderInterface
         return $this->query()->result;
     }
 
-    public function query($fetch = 'fetchAll'): QueryBuilder
+    /**
+     * @param string $fetch
+     * @return $this
+     */
+    public function query($fetch = 'fetchAll')
     {
         $sql =
             "SELECT {$this->columns} FROM `{$this->table}` {$this->where} {$this->limit}";
 
         $statement = $this->statement($sql);
 
-        $this->result = ([$statement, $fetch])(PDO::FETCH_OBJ);
+        $this->result = call_user_func($statement, $fetch, PDO::FETCH_OBJ);
 
         return $this;
     }

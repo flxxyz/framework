@@ -59,12 +59,18 @@ abstract class Model
         static::$connection = Connection::make($config);
     }
 
-    protected static function getConnection(): Connection
+    /**
+     * @return Connection
+     */
+    protected static function getConnection()
     {
         return static::$connection;
     }
 
-    protected static function make(): QueryBuilder
+    /**
+     * @return QueryBuilder
+     */
+    protected static function make()
     {
         static::$model = (new static)->newQuery();
 
@@ -75,8 +81,9 @@ abstract class Model
      * @param $columns
      * @return QueryBuilder
      */
-    public static function all(...$columns)
+    public static function all()
     {
+        $columns = func_get_args();
         return static::make()->columns(
             count($columns) ? $columns : ['*']
         )->all();
@@ -171,7 +178,7 @@ abstract class Model
      * 获取查询构造器
      * @return QueryBuilder
      */
-    protected static function getQueryBuilder(): QueryBuilder
+    protected static function getQueryBuilder()
     {
         if (is_null(static::$connection->getPdo())) {
             //重连数据库

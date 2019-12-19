@@ -5,7 +5,7 @@ namespace Col;
 
 class Request
 {
-    private static $instence;
+    private static $instance;
 
     protected $server;
 
@@ -88,18 +88,15 @@ class Request
         }
         $this->uri = $uri;
 
-        $this->ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $this->ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $this->method = $_SERVER['REQUEST_METHOD'];
 
-        $this->header = (function () {
-            $t = [];
-            foreach ($_SERVER as $k => $v) {
-                if (mb_stripos($k, 'http_') !== false) {
-                    $t[mb_strtolower(mb_substr($k, 5))] = $v;
-                }
+        $this->header = [];
+        foreach ($_SERVER as $k => $v) {
+            if (mb_stripos($k, 'http_') !== false) {
+                $this->header[mb_strtolower(mb_substr($k, 5))] = $v;
             }
-            return $t;
-        })();
+        }
 
         if (isset($this->header['content_type'])
             && ($this->header['content_type'] == 'application/x-www-form-urlencoded')) {
@@ -111,9 +108,13 @@ class Request
         $this->body = is_array($input) ? $input : [];
         $this->body = array_merge($this->body, $_POST);
         $this->query = $_GET;
-        $this->files = $_FILES ?? [];
+        $this->files = isset($_FILES) ? $_FILES : [];
         $this->cookie = $_COOKIE;
-        $this->ajax = (($this->header['x_requested_with'] ?? false) === 'XMLHttpRequest');
+        $this->ajax = (
+            (isset($this->header['x_requested_with'])
+                ? $this->header['x_requested_with']
+                : false)
+            === 'XMLHttpRequest');
     }
 
     /**
@@ -122,39 +123,39 @@ class Request
      */
     public static function make()
     {
-        if (is_null(static::$instence)) {
-            static::$instence = new static;
+        if (is_null(static::$instance)) {
+            static::$instance = new static;
         }
 
-        return static::$instence;
+        return static::$instance;
     }
 
     /**
      * 获取GET数据
      * @param string $key
-     * @param string $default
+     * @param string|null $default
      * @return mixed|string
      */
     public function get($key = '', $default = '')
     {
-        return $this->query[$key] ?? $default;
+        return isset($this->query[$key]) ? $this->query[$key] : $default;
     }
 
     /**
      * 获取POST数据
      * @param string $key
-     * @param string $default
+     * @param string|null $default
      * @return mixed|string
      */
     public function post($key = '', $default = '')
     {
-        return $this->body[$key] ?? $default;
+        return isset($this->body[$key]) ? $this->body[$key] : $default;
     }
 
     /**
      * @return string
      */
-    public function getUri(): string
+    public function getUri()
     {
         return $this->uri;
     }
@@ -162,7 +163,7 @@ class Request
     /**
      * @return string
      */
-    public function getMethod(): string
+    public function getMethod()
     {
         return $this->method;
     }
@@ -170,7 +171,7 @@ class Request
     /**
      * @return string
      */
-    public function getUserAgent(): string
+    public function getUserAgent()
     {
         return $this->ua;
     }
@@ -178,7 +179,7 @@ class Request
     /**
      * @return bool
      */
-    public function isAjax(): bool
+    public function isAjax()
     {
         return $this->ajax;
     }

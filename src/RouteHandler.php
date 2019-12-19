@@ -12,6 +12,7 @@ class RouteHandler
      * @var array
      */
     protected static $httpMethods = [
+        'any'    => [],
         'get'    => ['GET', 'HEAD'],
         'post'   => ['POST'],
         'put'    => ['PUT', 'PATCH'],
@@ -32,7 +33,7 @@ class RouteHandler
 
     /**
      * 路由处理回调函数
-     * @var callable|array|null|string
+     * @var \Closure|null
      */
     protected static $routeCallback = null;
 
@@ -51,7 +52,7 @@ class RouteHandler
 
     /**
      * 处理路由消息
-     * @return array|\Closure|null|string
+     * @return \Closure|null
      * @throws \ReflectionException
      */
     protected static function routeHandler()
@@ -61,7 +62,9 @@ class RouteHandler
                 continue;
             }
 
-            $closure = $route[self::$request->getMethod()] ?? null;
+            $closure = isset($route[self::$request->getMethod()])
+                ? $route[self::$request->getMethod()]
+                : null;
 
             if (is_null($closure)) {
                 return null;
@@ -95,11 +98,11 @@ class RouteHandler
 
     /**
      * 路由方法不存在抛错
-     * @param mixed ...$v
      * @return \Closure
      */
-    protected static function methodNotFound(...$v)
+    protected static function methodNotFound()
     {
+        $v = func_get_args();
         return function () use ($v) {
             echo "'{$v[0]}' does not have a method '{$v[1]}'<pre>";
             throw new MethodNotFoundException('没有找到该方法,检查一下大小写吧');

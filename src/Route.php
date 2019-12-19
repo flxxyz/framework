@@ -14,13 +14,9 @@ class Route extends RouteHandler
     public static function make(Request $request)
     {
         //合并http方法
-        self::$httpMethods['any'] = (function () {
-            $t = [];
-            foreach (self::$httpMethods as $method) {
-                $t = array_merge($t, $method);
-            }
-            return $t;
-        })();
+        foreach (self::$httpMethods as $method) {
+            $httpMethods['any'] = array_merge(self::$httpMethods['any'], $method);
+        }
         //传递当前请求类
         self::$request = $request;
     }
@@ -31,15 +27,15 @@ class Route extends RouteHandler
      */
     public static function end()
     {
-        self::$routeCallback = self::routeHandler() ?? function () {
-                http_response_code(404);
-                $error_page = Conf::get('app', 'error_page');
-                include_once "{$error_page['404']}";
-            };
+        self::$routeCallback = !is_null(self::routeHandler()) ? self::routeHandler() : function () {
+            http_response_code(404);
+            $error_page = Conf::get('app', 'error_page');
+            include_once "{$error_page['404']}";
+        };
 
         ob_start();
 
-        $r = (self::$routeCallback)(self::$request);
+        $r = call_user_func(self::$routeCallback, self::$request);
         if (is_string($r) || is_numeric($r)) {
             echo $r;
         }
